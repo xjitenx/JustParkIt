@@ -15,17 +15,26 @@ app.get('/', (req, res) => {
 
 // /api/parkcar?carNumber=123
 app.get("/api/parkcar", (req, res, next) => {    
-  carSlotMap.push({ carNo: req.query.carNumber, slotNo: slotNo });
+  carSlotMap.push({ carNo: parseInt(req.query.carNumber), slotNo: slotNo });
   res.send("Car is parked thanks and your slot no is :" + slotNo);
-  slotNo++;  
+  slotNo++;
 });
 
 // /api/parkcar?slotNumber=123
 app.get("/api/unparkcar", (req, res, next) => {
-    var index = carSlotMap.findIndex(obj => obj.slotNo === parseInt(req.query.slotNumber));    
+    let index = carSlotMap.findIndex(obj => obj.slotNo === parseInt(req.query.slotNumber));    
     vacatedSlots.push(parseInt(req.query.slotNumber));
     carSlotMap.splice(index, 1);    
     console.log(carSlotMap);
+});
+
+// /api/getinfo?carNumber=2343 or /api/getinfo?slotNumber=1
+app.get("/api/getinfo", (req, res, next) => {
+    if(req.query.carNumber) {
+        res.send(carSlotMap.filter(obj => obj.carNo === parseInt(req.query.carNumber)));
+    } else if (req.query.slotNumber) {        
+        res.send(carSlotMap.find(obj => obj.slotNo === parseInt(req.query.slotNumber)));
+    }
 });
 
 
