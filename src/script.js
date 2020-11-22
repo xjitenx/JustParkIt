@@ -1,30 +1,30 @@
-const libs = require("./libs");
+// Required script files
+const ip_limiter = require("./ip-limiter");
+const CarClass = require("./carclass.js");
 
 // Handle limit of the parking lot.
 const PARKING_LOT_LIMIT = process.env.LIMIT || 10;
-console.log(PARKING_LOT_LIMIT);
+console.log('Parking limit is : ' + PARKING_LOT_LIMIT);
 
 //carSlotMap => { carNo: 7771, slotNo: 3}
 let carSlotMap = [];
 let vacatedSlots = []; //slots that were occupied once
 let globalSlotNo = 0;
 
-// Ip Address LIMIT Handler
-global.userIpRequest = [];
-
 function welcomeHomePage(req, res) {
-  var ipAllowedYN = libs.makeIpEntry(req.ip);
+  var ipAllowedYN = ip_limiter.makeIpEntry(req.ip);
   if (!ipAllowedYN) {
     res.send(
       "Sorry you have crossed the maximum limit of requests in 10secs. Please try again in a short while."
     );
   } else {
-    res.send("Welcome to the JustParkIt Page.<br>Keep Parking!");
+    res.send("Welcome to the JustParkIt Server.<br>Keep Parking!");
   }
 }
 
+// Logic for parking a car
 function parkCar(req, res, next) {
-  var ipAllowedYN = libs.makeIpEntry(req.ip);
+  var ipAllowedYN = ip_limiter.makeIpEntry(req.ip);
   if (!ipAllowedYN) {
     res.send(
       "Sorry you have crossed the maximum limit of requests in 10secs. Please try again in a short while."
@@ -42,10 +42,7 @@ function parkCar(req, res, next) {
           parkSlotNo = globalSlotNo + 1;
           globalSlotNo++;
         }
-        carSlotMap.push({
-          carNo: parseInt(req.query.carNumber),
-          slotNo: parkSlotNo,
-        });
+        carSlotMap.push(new CarClass(parseInt(req.query.carNumber), parkSlotNo));
         res.send("Car is parked, thanks and your slot no is :" + parkSlotNo);
       } else {
         res.send("Please enter a valid car number i.e: 1234.");
@@ -54,8 +51,9 @@ function parkCar(req, res, next) {
   }
 }
 
+// Logic for Un-Parking a car
 function unParkCar(req, res, next) {
-  var ipAllowedYN = libs.makeIpEntry(req.ip);
+  var ipAllowedYN = ip_limiter.makeIpEntry(req.ip);
   if (!ipAllowedYN) {
     res.send(
       "Sorry you have crossed the maximum limit of requests in 10secs. Please try again in a short while."
@@ -63,7 +61,7 @@ function unParkCar(req, res, next) {
   } else {
     if (Number.isInteger(parseInt(req.query.slotNumber))) {
       let removeSlotNo = parseInt(req.query.slotNumber);
-      let index = carSlotMap.findIndex((obj) => obj.slotNo === removeSlotNo);
+      let index = carSlotMap.findIndex((obj) => obj.slotNumber === removeSlotNo);
       if (index > -1) {
         vacatedSlots.push(removeSlotNo);
         carSlotMap.splice(index, 1);
@@ -79,8 +77,9 @@ function unParkCar(req, res, next) {
   }
 }
 
+// Logic for Get Info of a car or a slot
 function getInfo(req, res, next) {
-  var ipAllowedYN = libs.makeIpEntry(req.ip);
+  var ipAllowedYN = ip_limiter.makeIpEntry(req.ip);
   if (!ipAllowedYN) {
     res.send(
       "Sorry you have crossed the maximum limit of requests in 10secs. Please try again in a short while."
@@ -89,7 +88,7 @@ function getInfo(req, res, next) {
     if (req.query.carNumber) {
       if (Number.isInteger(parseInt(req.query.carNumber))) {
         let result = carSlotMap.filter(
-          (obj) => obj.carNo === parseInt(req.query.carNumber)
+          (obj) => obj.carNumber === parseInt(req.query.carNumber)
         );
         if (result.length > 0) {
           res.send(result);
@@ -104,7 +103,7 @@ function getInfo(req, res, next) {
     } else if (req.query.slotNumber) {
       if (Number.isInteger(parseInt(req.query.slotNumber))) {
         let result = carSlotMap.find(
-          (obj) => obj.slotNo === parseInt(req.query.slotNumber)
+          (obj) => obj.slotNumber === parseInt(req.query.slotNumber)
         );
         if (result) {
           res.send(result);
@@ -122,6 +121,7 @@ function getInfo(req, res, next) {
   }
 }
 
+// Export all these functions only
 module.exports = {
   getInfo,
   unParkCar,
