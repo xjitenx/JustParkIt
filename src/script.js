@@ -2,6 +2,7 @@ const libs = require("./libs");
 
 // Handle limit of the parking lot.
 const PARKING_LOT_LIMIT = process.env.LIMIT || 10;
+console.log(PARKING_LOT_LIMIT);
 
 //carSlotMap => { carNo: 7771, slotNo: 3}
 let carSlotMap = [];
