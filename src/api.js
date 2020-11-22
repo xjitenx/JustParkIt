@@ -5,7 +5,7 @@ const script = require("./script");
 
 // /
 app.get("/", (req, res) => {
-  res.send("Welcome to the JustParkIt Page.<br>Keep Parking!");
+  script.welcomeHomePage(req, res);
 });
 
 // /api/parkcar?carNumber=123

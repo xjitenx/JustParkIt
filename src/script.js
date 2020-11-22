@@ -12,6 +12,17 @@ let globalSlotNo = 0;
 // Ip Address LIMIT Handler
 global.userIpRequest = [];
 
+function welcomeHomePage(req, res) {
+  var ipAllowedYN = libs.makeIpEntry(req.ip);
+  if (!ipAllowedYN) {
+    res.send(
+      "Sorry you have crossed the maximum limit of requests in 10secs. Please try again in a short while."
+    );
+  } else {
+    res.send("Welcome to the JustParkIt Page.<br>Keep Parking!");
+  }
+}
+
 function parkCar(req, res, next) {
   var ipAllowedYN = libs.makeIpEntry(req.ip);
   if (!ipAllowedYN) {
@@ -115,4 +126,5 @@ module.exports = {
   getInfo,
   unParkCar,
   parkCar,
+  welcomeHomePage,
 };
