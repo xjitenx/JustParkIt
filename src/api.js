@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 
-const script = require('./script');
+const script = require("./script");
 
 // /
 app.get("/", (req, res) => {
