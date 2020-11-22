@@ -15,7 +15,7 @@ Instruction :-
 1. Install Node.Js. Download the Zip File of the project.
 2. Extract the zip file and copy the root directory path and change directory to that path.
 3. run command - npm install
-4. create a .env file in the root directory with the specified format line by line and save:-
+4. create a .env file in the root directory with the specified format line by line and save (if u dont have it):-
     PORT=3000
     LIMIT=120
 
