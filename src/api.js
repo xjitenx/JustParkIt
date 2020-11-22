@@ -2,7 +2,6 @@ const express = require("express");
 const app = express();
 
 const PARKING_LOT_LIMIT = process.env.LIMIT || 10;
-console.log("The Parking Lot Limit is : " + PARKING_LOT_LIMIT);
 
 //carSlotMap => { carNo: 7771, slotNo: 3}
 let carSlotMap = [];
@@ -11,7 +10,7 @@ let globalSlotNo = 0;
 
 // /
 app.get("/", (req, res) => {
-  res.send("Welcome to the JustParkIt Page.<br>Keep Parking!");
+  res.send("Welcome to the JustParkIt Page.<br>Keep Parking!");  
 });
 
 // /api/parkcar?carNumber=123
