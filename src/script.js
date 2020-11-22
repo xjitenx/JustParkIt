@@ -50,16 +50,20 @@ function unParkCar(req, res, next) {
       "Sorry you have crossed the maximum limit of requests in 10secs. Please try again in a short while."
     );
   } else {
-    let removeSlotNo = parseInt(req.query.slotNumber);
-    let index = carSlotMap.findIndex((obj) => obj.slotNo === removeSlotNo);
-    if (index > -1) {
-      vacatedSlots.push(removeSlotNo);
-      carSlotMap.splice(index, 1);
-      res.send("Car is unparked from slot no :" + removeSlotNo);
+    if (Number.isInteger(parseInt(req.query.slotNumber))) {
+      let removeSlotNo = parseInt(req.query.slotNumber);
+      let index = carSlotMap.findIndex((obj) => obj.slotNo === removeSlotNo);
+      if (index > -1) {
+        vacatedSlots.push(removeSlotNo);
+        carSlotMap.splice(index, 1);
+        res.send("Car is unparked from slot no :" + removeSlotNo);
+      } else {
+        res.send(
+          "Sorry this slot number doesnt have any car parked on it. Please try a different slot number."
+        );
+      }
     } else {
-      res.send(
-        "Sorry this slot number doesnt have any car parked on it. Please try a different slot number."
-      );
+      res.send("Please enter a valid car number i.e: 1 or 2 or 4 etc.");
     }
   }
 }
@@ -72,22 +76,34 @@ function getInfo(req, res, next) {
     );
   } else {
     if (req.query.carNumber) {
-      let result = carSlotMap.filter(
-        (obj) => obj.carNo === parseInt(req.query.carNumber)
-      );
-      if (result.length > 0) {
-        res.send(result);
+      if (Number.isInteger(parseInt(req.query.carNumber))) {
+        let result = carSlotMap.filter(
+          (obj) => obj.carNo === parseInt(req.query.carNumber)
+        );
+        if (result.length > 0) {
+          res.send(result);
+        } else {
+          res.send(
+            "Sorry the entry doesnt exist. Please try a different value."
+          );
+        }
       } else {
-        res.send("Sorry the entry doesnt exist. Please try a different value.");
+        res.send("Please enter a valid car number i.e: 1234.");
       }
     } else if (req.query.slotNumber) {
-      let result = carSlotMap.find(
-        (obj) => obj.slotNo === parseInt(req.query.slotNumber)
-      );
-      if (result) {
-        res.send(result);
+      if (Number.isInteger(parseInt(req.query.slotNumber))) {
+        let result = carSlotMap.find(
+          (obj) => obj.slotNo === parseInt(req.query.slotNumber)
+        );
+        if (result) {
+          res.send(result);
+        } else {
+          res.send(
+            "Sorry the entry doesnt exist. Please try a different value."
+          );
+        }
       } else {
-        res.send("Sorry the entry doesnt exist. Please try a different value.");
+        res.send("Please enter a valid car number i.e: 1 or 2 or 4 etc.");
       }
     } else {
       res.send("Please provide either car number or slot number.");
